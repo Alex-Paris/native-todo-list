@@ -1,20 +1,32 @@
+import { AntDesign } from '@expo/vector-icons'
 import { useState } from 'react'
-import {
-  Alert,
-  Image,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { Alert, Image, TextInput, TouchableOpacity, View } from 'react-native'
 
 import logoImg from './assets/logo.png'
+import { Task } from './List/ListItem'
 
-export default function Header() {
+interface HeaderProps {
+  tasks: Task[]
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>
+}
+
+export default function Header({ tasks, setTasks }: HeaderProps) {
   const [task, setTask] = useState('')
 
   function handleAddTask() {
-    Alert.alert('Atenção', 'Já existe uma tarefa de mesmo nome inserido!')
+    if (tasks.findIndex((i) => i.description === task) > -1) {
+      Alert.alert('Atenção', 'Já existe uma tarefa de mesmo nome inserido!')
+      return
+    }
+
+    setTasks((state) => [
+      ...state,
+      {
+        description: task,
+        isCompleted: false,
+      },
+    ])
+    setTask('')
   }
 
   return (
@@ -31,10 +43,10 @@ export default function Header() {
         />
 
         <TouchableOpacity
-          className="rounded-md bg-blue-dark p-[18] hover:bg-blue"
+          className="items-center justify-center rounded-md bg-blue-dark p-[18] hover:bg-blue"
           onPress={handleAddTask}
         >
-          <Text className="text-base text-white">⊕</Text>
+          <AntDesign name="pluscircleo" size={16} color="white" />
         </TouchableOpacity>
       </View>
     </View>
